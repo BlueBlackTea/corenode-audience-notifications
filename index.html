@@ -319,9 +319,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   flex-shrink: 0;
-  gap: 6px;
 }
 .unread-dot {
   width: 7px;
@@ -931,8 +930,8 @@ function renderGroup(items) {
       : `readItem('${n.id}')`;
     const rightCol = (isRead && !n.hasDetail) ? '' : `
       <div class="nitem-right">
-        ${!isRead ? `<div class="unread-dot"></div>` : ''}
-        ${n.hasDetail ? `<div class="nchevron">${CHEVRON}</div>` : ''}
+        ${!isRead ? `<div class="unread-dot"></div>` : `<div></div>`}
+        ${n.hasDetail ? `<div class="nchevron">${CHEVRON}</div>` : `<div></div>`}
       </div>`;
     return `
       <div class="nitem${isRead ? '' : ' unread'}" onclick="${onclick}">
@@ -960,7 +959,7 @@ function renderNotices() {
   const NCHEV = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C4CDD4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`;
 
   const pinnedHtml = pinned.map(n => `
-    <div class="ncard pinned" onclick="openDetail('${n.id}')" style="display:flex;align-items:center;gap:8px;">
+    <div class="ncard pinned" onclick="openDetail('${n.id}')" style="display:flex;align-items:flex-end;gap:8px;">
       <div style="flex:1;min-width:0;">
         <div class="ncard-badge badge-important">중요</div>
         <div class="ncard-title">${n.title}</div>
@@ -971,7 +970,7 @@ function renderNotices() {
     </div>`).join('');
 
   const regularHtml = regular.map(n => `
-    <div class="ncard" onclick="openDetail('${n.id}')" style="display:flex;align-items:center;gap:8px;">
+    <div class="ncard" onclick="openDetail('${n.id}')" style="display:flex;align-items:flex-end;gap:8px;">
       <div style="flex:1;min-width:0;">
         <div class="ncard-title">${n.title}</div>
         <div class="ncard-desc">${n.desc}</div>
