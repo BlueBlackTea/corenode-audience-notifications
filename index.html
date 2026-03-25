@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoreNode — 알림함 (청중)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --font: 'Noto Sans KR', -apple-system, sans-serif;
+  --accent: #36454F;
+  --accent-light: #EEF1F2;
+  --accent-mid: #D6DCDF;
+  --text-primary: #111827;
+  --text-secondary: #6B7280;
+  --text-muted: #9CA3AF;
+  --bg: #F3F4F6;
+  --surface: #FFFFFF;
+  --border: #E5E7EB;
+  --border-light: #F3F4F6;
+  --green: #059669;
+  --red: #DC2626;
+  --orange: #D97706;
+  --purple: #7C3AED;
+  --yellow: #CA8A04;
+  --trans: 0.22s cubic-bezier(.4,0,.2,1);
+  --header: #36454F;
+}
+
+body {
+  font-family: var(--font);
+  background: #CBD5E1;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 32px 16px 48px;
+  gap: 32px;
+}
+
+/* ══════════════════════════════════
+   PHONE FRAME
+══════════════════════════════════ */
+.phone {
+  width: 375px;
+  height: 812px;
+  background: var(--bg);
+  border-radius: 44px;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.28), 0 0 0 10px #1a1a1a, 0 0 0 12px #333;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+/* ── Status Bar ── */
+.status-bar {
+  background: var(--header);
+  padding: 14px 24px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.status-time {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.3px;
+}
+.status-icons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── Top Nav ── */
+.topnav {
+  background: var(--header);
+  padding: 10px 20px 16px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.nav-back {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.9);
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background var(--trans);
+}
+.nav-back:hover { background: rgba(255,255,255,0.12); }
+
+.nav-title {
+  flex: 1;
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.3px;
+  padding-left: 4px;
+}
+.nav-bell {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.9);
+  cursor: pointer;
+}
+.bell-dot {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #EF4444;
+  border: 2px solid var(--header);
+  transition: opacity var(--trans), transform var(--trans);
+}
+.bell-dot.gone {
+  opacity: 0;
+  transform: scale(0);
+}
+
+/* ── Tab Bar ── */
+.tab-bar {
+  background: var(--surface);
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.tab-btn {
+  flex: 1;
+  padding: 13px 0 12px;
+  font-size: 14.5px;
+  font-weight: 500;
+  font-family: var(--font);
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: color var(--trans);
+}
+.tab-btn.active {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 2.5px;
+  background: var(--accent);
+  border-radius: 2px 2px 0 0;
+}
+
+/* ── Tab Content ── */
+.tab-content {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+.tab-content.on { display: flex; }
+
+/* ── Filter Bar (Tab 1 only) ── */
+.filter-bar {
+  background: #FAFAFA;
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+}
+.fchip {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--font);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--trans);
+  line-height: 1;
+}
+.fchip.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.mark-all-btn {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: 7px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text-secondary);
+  font-size: 11.5px;
+  font-weight: 500;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: all var(--trans);
+  white-space: nowrap;
+}
+.mark-all-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-light);
+}
+.mark-all-btn.hidden { display: none; }
+
+/* ── Scrollable list ── */
+.list-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.list-scroll::-webkit-scrollbar { width: 0; }
+
+/* ── Notification Item ── */
+.nitem {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-light);
+  padding: 14px 16px;
+  display: flex;
+  gap: 12px;
+  cursor: pointer;
+  transition: background var(--trans);
+}
+.nitem:hover { background: #FAFAFA; }
+.nitem.unread { background: #F4F8FF; }
+.nitem.unread:hover { background: #ECF2FF; }
+
+.nicon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.nicon.blue,
+.nicon.green,
+.nicon.purple,
+.nicon.orange,
+.nicon.red,
+.nicon.yellow { background: #E8ECEE; color: #36454F; }
+
+.nbody { flex: 1; min-width: 0; }
+
+.ntitle {
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.45;
+  margin-bottom: 3px;
+}
+.nitem.unread .ntitle { font-weight: 600; }
+
+.ndesc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 5px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.nmeta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 0;
+}
+.nsender {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.nmeta-dot {
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  flex-shrink: 0;
+}
+.ntime {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.nitem-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  padding-top: 3px;
+  gap: 6px;
+}
+.unread-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #EF4444;
+  flex-shrink: 0;
+}
+.nchevron {
+  color: #C4CDD4;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* ── Date section label ── */
+.date-label {
+  padding: 8px 16px 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.4px;
+  background: var(--bg);
+}
+
+/* ── Empty state ── */
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 32px;
+  text-align: center;
+  gap: 6px;
+  color: var(--text-muted);
+}
+.empty-state svg { margin-bottom: 10px; opacity: 0.28; }
+.empty-title { font-size: 14px; font-weight: 600; color: var(--text-secondary); }
+.empty-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.65; }
+
+/* ══════════════════════════════════
+   TAB 2: NOTICE
+══════════════════════════════════ */
+.notice-wrap {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Notice Section Label ── */
+.notice-section-label {
+  padding: 8px 16px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.ncard {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-light);
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background var(--trans);
+}
+.ncard:hover { background: #FAFAFA; }
+.ncard.pinned {
+  background: #FFFBEB;
+}
+.ncard.pinned:hover { background: #FEF3C7; }
+
+.ncard-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.badge-important { background: #FEF3C7; color: #B45309; }
+
+.ncard-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.45;
+  margin-bottom: 4px;
+}
+.ncard-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 5px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ncard-time { font-size: 11px; color: var(--text-muted); }
+
+/* ── Notice Detail (slide-in) ── */
+.notice-detail {
+  position: absolute;
+  inset: 0;
+  background: var(--surface);
+  transform: translateX(100%);
+  transition: transform var(--trans);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+.notice-detail.open { transform: translateX(0); }
+
+.nd-head {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.nd-back {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font);
+  padding: 4px 0;
+  transition: opacity var(--trans);
+}
+.nd-back:hover { opacity: 0.7; }
+
+.nd-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 16px 24px;
+}
+.nd-body::-webkit-scrollbar { width: 0; }
+
+.nd-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.nd-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+.nd-time {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.nd-content {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.9;
+  white-space: pre-line;
+}
+
+/* ══════════════════════════════════
+   SIDE PANEL (메인 화면 벨 데모)
+══════════════════════════════════ */
+.demo-label {
+  width: 100%;
+  max-width: 260px;
+  text-align: center;
+}
+.demo-label h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 4px;
+}
+.demo-label p {
+  font-size: 11.5px;
+  color: #6B7280;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.demo-phone-mini {
+  width: 220px;
+  background: #1B4843;
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+.demo-logo {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.3px;
+}
+.demo-logo span { color: rgba(255,255,255,0.6); }
+.demo-bell-wrap {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.9);
+  cursor: pointer;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  transition: background var(--trans);
+}
+.demo-bell-wrap:hover { background: rgba(255,255,255,0.18); }
+.demo-bell-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #EF4444;
+  border: 2px solid #1B4843;
+  transition: opacity 0.3s, transform 0.3s;
+}
+.demo-bell-dot.gone { opacity: 0; transform: scale(0); }
+
+.demo-toggle-btn {
+  display: block;
+  width: 100%;
+  padding: 9px;
+  border-radius: 8px;
+  border: 1.5px solid #D1D5DB;
+  background: #fff;
+  color: #374151;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  text-align: center;
+  transition: all var(--trans);
+  margin-top: 12px;
+}
+.demo-toggle-btn:hover {
+  border-color: #2563EB;
+  color: #2563EB;
+  background: #EFF6FF;
+}
+
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     메인 화면 벨 아이콘 데모 (오른쪽 패널)
+═══════════════════════════════════════════ -->
+<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:80px;gap:16px;">
+  <div class="demo-label">
+    <h3>메인 화면 벨 아이콘</h3>
+    <p>새소식 있을 때 숫자 없이<br>컬러 도트(●)만 표시됩니다.</p>
+    <div class="demo-phone-mini">
+      <div class="demo-logo">Core<strong>Node</strong><span>.</span></div>
+      <div class="demo-bell-wrap" id="demoBellWrap" onclick="toggleDemoDot()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        <div class="demo-bell-dot" id="demoBellDot"></div>
+      </div>
+    </div>
+    <button class="demo-toggle-btn" onclick="toggleDemoDot()" id="demoToggleBtn">
+      ● 도트 숨기기 (읽음 처리 시뮬레이션)
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     청중 알림함 화면 (모바일 프레임)
+═══════════════════════════════════════════ -->
+<div class="phone">
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons">
+      <!-- Signal -->
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="rgba(255,255,255,0.85)">
+        <rect x="0" y="8" width="3" height="4" rx="0.8"/>
+        <rect x="4.5" y="5.5" width="3" height="6.5" rx="0.8"/>
+        <rect x="9" y="2.5" width="3" height="9.5" rx="0.8"/>
+        <rect x="13.5" y="0" width="3" height="12" rx="0.8" opacity="0.3"/>
+      </svg>
+      <!-- WiFi -->
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="rgba(255,255,255,0.85)" stroke-linecap="round">
+        <path d="M1 3.5C3.8 1.2 8 1 11 3.5" stroke-width="1.4" opacity="0.4"/>
+        <path d="M3 6.2C4.9 4.6 7.5 4.5 9 6.2" stroke-width="1.4"/>
+        <circle cx="6" cy="9.5" r="1.2" fill="rgba(255,255,255,0.85)" stroke="none"/>
+      </svg>
+      <!-- Battery -->
+      <svg width="24" height="12" viewBox="0 0 24 12" fill="none">
+        <rect x="0.5" y="0.5" width="20" height="11" rx="2.5" stroke="rgba(255,255,255,0.5)"/>
+        <rect x="1.5" y="1.5" width="16" height="9" rx="1.5" fill="rgba(255,255,255,0.85)"/>
+        <path d="M21.5 4V8C22.4 7.6 23 6.9 23 6C23 5.1 22.4 4.4 21.5 4Z" fill="rgba(255,255,255,0.4)"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Top Nav -->
+  <div class="topnav">
+    <button class="nav-back" onclick="alert('이전 화면으로 이동')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </button>
+    <div class="nav-title">알림함</div>
+    <div class="nav-bell">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+      <div class="bell-dot" id="mainBellDot"></div>
+    </div>
+  </div>
+
+  <!-- Tab Bar -->
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tab-notif" onclick="switchTab('notif')">알림</button>
+    <button class="tab-btn" id="tab-notice" onclick="switchTab('notice')">공지</button>
+  </div>
+
+  <!-- ── Tab 1: 알림 ── -->
+  <div class="tab-content on" id="tc-notif">
+    <div class="notice-wrap">
+      <div class="filter-bar">
+        <button class="fchip active" id="fc-all" onclick="setFilter('all')">전체</button>
+        <button class="fchip" id="fc-unread" onclick="setFilter('unread')">안읽음<span id="unreadLabel"></span></button>
+        <button class="mark-all-btn hidden" id="markAllBtn" onclick="markAllRead()">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          모두 읽음
+        </button>
+      </div>
+      <div class="list-scroll" id="notifList"></div>
+      <!-- 알림 상세 (슬라이드 인, announcement 전용) -->
+      <div class="notice-detail" id="notifDetail">
+        <div class="nd-head">
+          <button class="nd-back" onclick="closeNotifDetail()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+            알림 목록
+          </button>
+        </div>
+        <div class="nd-body">
+          <div class="nd-tag" id="ndTag"></div>
+          <div class="nd-title" id="ndTitle"></div>
+          <div class="nd-time" id="ndTime"></div>
+          <div class="nd-content" id="ndContent"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Tab 2: 공지 ── -->
+  <div class="tab-content" id="tc-notice">
+    <div class="notice-wrap">
+      <div class="list-scroll" id="noticeList"></div>
+      <!-- 공지 상세 (슬라이드 인) -->
+      <div class="notice-detail" id="noticeDetail">
+        <div class="nd-head">
+          <button class="nd-back" onclick="closeDetail()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+            공지 목록
+          </button>
+        </div>
+        <div class="nd-body">
+          <div class="nd-tag" id="dTag"></div>
+          <div class="nd-title" id="dTitle"></div>
+          <div class="nd-time" id="dTime"></div>
+          <div class="nd-content" id="dContent"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+
+<script>
+/* ═══════════════════════════════
+   DATA
+═══════════════════════════════ */
+
+const NOTIFS = [
+  {
+    id: 'n1',
+    type: 'networking_chat_request',
+    iconClass: 'blue',
+    title: '새로운 대화 신청',
+    desc: '김민준(삼성전자)님이 대화를 신청했어요. 매칭 점수 87%',
+    sender: null,
+    time: '3분 전',
+    isRead: false,
+    cta: { label: '확인하기', style: '' },
+  },
+  {
+    id: 'n2',
+    type: 'networking_chat_accepted',
+    iconClass: 'green',
+    title: '대화 요청이 수락됐어요!',
+    desc: '이지은(카카오)님이 대화 요청을 수락했어요.',
+    sender: null,
+    time: '15분 전',
+    isRead: false,
+    cta: { label: '대화하기', style: '' },
+  },
+  {
+    id: 'n3',
+    type: 'networking_ai_match',
+    iconClass: 'purple',
+    title: 'AI 매칭 추천',
+    desc: '나와 잘 맞는 참석자 4명을 찾았어요. 지금 바로 확인해보세요.',
+    sender: null,
+    time: '1시간 전',
+    isRead: false,
+    cta: { label: '추천 보기', style: '' },
+  },
+  {
+    id: 'n4',
+    type: 'announcement_cancelled',
+    iconClass: 'red',
+    title: '[AI 디자인 컨퍼런스 2024] 취소 안내',
+    desc: '홍길동님, AI 디자인 컨퍼런스 2024의 행사 취소 안내를 드립니다. 불편을 드려 대단히 죄송합니다.',
+    sender: '한국디자인진흥원 주최측',
+    time: '2시간 전',
+    isRead: false,
+    hasDetail: true,
+    body: '홍길동님,\n\nAI 디자인 컨퍼런스 2024의 취소 안내를 드립니다.\n\n부득이한 사정으로 인해 행사가 전면 취소되었습니다. 이미 등록하신 분들께는 개별적으로 환불 안내 이메일이 발송될 예정입니다.\n\n환불 처리 기간: 영업일 기준 5~7일\n\n불편을 드려 대단히 죄송합니다.\n\n한국디자인진흥원 드림',
+  },
+  {
+    id: 'n5',
+    type: 'event_started',
+    iconClass: 'orange',
+    title: '행사가 시작됐어요',
+    desc: '\'서울 디자이너 워크숍\'이 지금 시작됐습니다.',
+    sender: null,
+    time: '3시간 전',
+    isRead: true,
+    cta: null,
+  },
+  {
+    id: 'n6',
+    type: 'event_reminder',
+    iconClass: 'orange',
+    title: 'D-1 행사 시작 임박',
+    desc: '내일은 \'AI 디자인 컨퍼런스 2024\' 개막일이에요. 행사 장소를 미리 확인해두세요.',
+    sender: null,
+    time: '어제',
+    isRead: true,
+    cta: null,
+  },
+  {
+    id: 'n7',
+    type: 'announcement_material_request',
+    iconClass: 'yellow',
+    title: '[AI 디자인 컨퍼런스 2024] 발표자료 제출 요청',
+    desc: '홍길동님, 발표자료 제출을 요청드립니다. 마감: 2024.03.22 18:00 | 제출 방법: 어드민 업로드',
+    sender: '한국디자인진흥원 주최측',
+    time: '3일 전',
+    isRead: true,
+    hasDetail: true,
+    body: '홍길동님,\n\n아래와 같이 발표자료 제출을 요청드립니다.\n\n■ 제출 마감\n2024년 3월 22일 (금) 오후 6시\n\n■ 제출 방법\n행사 어드민 > 내 발표 > 자료 업로드\n\n■ 제출 형식\nPDF 또는 PPTX (최대 50MB)\n\n■ 유의사항\n마감 이후 제출은 운영팀 개별 문의 바랍니다.\n\n감사합니다.\n한국디자인진흥원 드림',
+  },
+];
+
+const NOTICES = [
+  {
+    id: 'a1',
+    isPinned: true,
+    tagLabel: '시스템',
+    tagClass: 'tag-system',
+    title: '시스템 점검 안내',
+    desc: '3/26(수) 02:00~04:00 점검이 예정되어 있습니다. 일부 기능이 일시 제한될 수 있어요.',
+    time: '2026.03.25',
+    body: 'CoreNode. 운영팀입니다.\n\n아래 일정으로 시스템 정기 점검을 진행합니다.\n\n📅 점검 일시\n2026년 3월 26일 (수) 02:00 ~ 04:00\n\n🔧 점검 내용\n서버 인프라 업그레이드 및 데이터베이스 최적화\n\n⚠ 영향 범위\n점검 시간 동안 일부 기능(알림 발송, 대화 연결)이 일시적으로 제한될 수 있습니다. 데이터 손실 없이 정상 복구될 예정입니다.\n\n이용에 불편을 드려 죄송합니다.',
+  },
+  {
+    id: 'a2',
+    isPinned: false,
+    tagLabel: '공지',
+    tagClass: 'tag-notice',
+    title: 'CoreNode. 이용약관 개정 안내',
+    desc: '2026년 4월 1일부터 개정 약관이 적용됩니다. 주요 변경사항을 확인해주세요.',
+    time: '2026.03.20',
+    body: 'CoreNode. 운영팀입니다.\n\n서비스 개선을 위해 이용약관을 아래와 같이 개정합니다.\n\n📌 시행일\n2026년 4월 1일 (수)\n\n📋 주요 변경사항\n1. 개인정보 수집·이용 목적 구체화\n2. AI 매칭 서비스 이용 동의 조항 신설\n3. 알림 발송 채널 설정 정책 명확화\n\n변경된 약관에 동의하지 않으실 경우 시행일 전까지 서비스 이용을 중단하고 탈퇴를 신청할 수 있습니다.\n\n감사합니다.',
+  },
+  {
+    id: 'a3',
+    isPinned: false,
+    tagLabel: '업데이트',
+    tagClass: 'tag-update',
+    title: 'AI 매칭 기능 업데이트',
+    desc: '매칭 정확도가 대폭 개선되었습니다. 새로운 관심사 태그 기능도 사용해보세요!',
+    time: '2026.03.15',
+    body: 'CoreNode. 운영팀입니다.\n\nAI 매칭 엔진이 업데이트되었습니다.\n\n✨ 주요 개선사항\n\n1. 매칭 정확도 향상\n   직군·관심사·행사 이력을 종합 분석하는 새로운 모델을 적용했습니다.\n\n2. 관심사 태그 기능 추가\n   마이페이지에서 관심 키워드를 직접 입력하면 더 정확한 매칭을 받을 수 있어요.\n\n3. 매칭 점수 표시 개선\n   점수 산출 근거를 카드에서 바로 확인할 수 있습니다.\n\n더 편리한 네트워킹을 경험해보세요!',
+  },
+  {
+    id: 'a4',
+    isPinned: false,
+    tagLabel: '프로모션',
+    tagClass: 'tag-promo',
+    title: '봄맞이 프리미엄 멤버십 특가',
+    desc: '3월 한 달간 프리미엄 첫 달 50% 할인! AI 매칭 무제한 + 커피챗 우선 노출 혜택.',
+    time: '2026.03.01',
+    body: 'CoreNode. 마케팅팀입니다.\n\n봄맞이 프리미엄 멤버십 특가 프로모션을 안내드립니다.\n\n🌸 혜택 안내\n• 프리미엄 첫 달 50% 할인\n• AI 매칭 횟수 무제한\n• 커피챗 신청 우선 노출\n• 명함 무제한 교환\n\n📅 기간\n2026.03.01 ~ 2026.03.31\n\n지금 바로 업그레이드하고 더 많은 인연을 만나보세요!',
+  },
+];
+
+/* ═══════════════════════════════
+   ICONS (단색 SVG)
+═══════════════════════════════ */
+const ICONS = {
+  networking_chat_request: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+  networking_chat_accepted: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
+  networking_ai_match: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+  event_started: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+  event_reminder: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+  announcement_cancelled: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`,
+  announcement_material_request: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
+};
+
+const PIN_ICON = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24z"/></svg>`;
+
+/* ═══════════════════════════════
+   STATE
+═══════════════════════════════ */
+const readState = {};
+NOTIFS.forEach(n => { readState[n.id] = n.isRead; });
+
+let currentFilter = 'all';
+
+/* ═══════════════════════════════
+   RENDER: 알림 탭
+═══════════════════════════════ */
+function renderNotifs() {
+  const unreadCount = NOTIFS.filter(n => !readState[n.id]).length;
+
+  // 안읽음 칩 숫자
+  const lbl = document.getElementById('unreadLabel');
+  lbl.textContent = unreadCount > 0 ? ' ' + unreadCount : '';
+
+  // 모두읽음 버튼
+  document.getElementById('markAllBtn').classList.toggle('hidden', unreadCount === 0);
+
+  // 벨 도트 (알림함 헤더 + 데모 패널)
+  document.getElementById('mainBellDot').classList.toggle('gone', unreadCount === 0);
+  document.getElementById('demoBellDot').classList.toggle('gone', unreadCount === 0);
+
+  // 데모 버튼 텍스트
+  const demoBtn = document.getElementById('demoToggleBtn');
+  if (unreadCount > 0) {
+    demoBtn.textContent = '● 도트 숨기기 (읽음 처리 시뮬레이션)';
+  } else {
+    demoBtn.textContent = '● 도트 표시하기 (안읽음 시뮬레이션)';
+  }
+
+  // 목록 필터링
+  let items = currentFilter === 'unread'
+    ? NOTIFS.filter(n => !readState[n.id])
+    : NOTIFS;
+
+  const list = document.getElementById('notifList');
+
+  if (items.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        <div class="empty-title">알림이 없어요</div>
+        <div class="empty-desc">새로운 활동이 생기면<br>여기서 알려드릴게요.</div>
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = renderGroup(items);
+}
+
+const CHEVRON = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`;
+
+function renderGroup(items) {
+  return items.map(n => {
+    const isRead = readState[n.id];
+    const onclick = n.hasDetail
+      ? `openNotifDetail('${n.id}')`
+      : `readItem('${n.id}')`;
+    const rightCol = (isRead && !n.hasDetail) ? '' : `
+      <div class="nitem-right">
+        ${!isRead ? `<div class="unread-dot"></div>` : ''}
+        ${n.hasDetail ? `<div class="nchevron">${CHEVRON}</div>` : ''}
+      </div>`;
+    return `
+      <div class="nitem${isRead ? '' : ' unread'}" onclick="${onclick}">
+        <div class="nicon ${n.iconClass}">${ICONS[n.type] || ''}</div>
+        <div class="nbody">
+          <div class="ntitle">${n.title}</div>
+          <div class="ndesc">${n.desc}</div>
+          <div class="nmeta">
+            ${n.sender ? `<span class="nsender">${n.sender}</span><div class="nmeta-dot"></div>` : ''}
+            <span class="ntime">${n.time}</span>
+          </div>
+        </div>
+        ${rightCol}
+      </div>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════
+   RENDER: 공지 탭
+═══════════════════════════════ */
+function renderNotices() {
+  const pinned  = NOTICES.filter(n => n.isPinned);
+  const regular = NOTICES.filter(n => !n.isPinned);
+
+  const pinnedHtml = pinned.map(n => `
+    <div class="ncard pinned" onclick="openDetail('${n.id}')">
+      <div class="ncard-badge badge-important">중요</div>
+      <div class="ncard-title">${n.title}</div>
+      <div class="ncard-desc">${n.desc}</div>
+      <div class="ncard-time">${n.time}</div>
+    </div>`).join('');
+
+  const regularHtml = regular.map(n => `
+    <div class="ncard" onclick="openDetail('${n.id}')">
+      <div class="ncard-title">${n.title}</div>
+      <div class="ncard-desc">${n.desc}</div>
+      <div class="ncard-time">${n.time}</div>
+    </div>`).join('');
+
+  let html = '';
+  if (pinned.length)  html += `<div class="notice-section-label">중요 공지</div>${pinnedHtml}`;
+  if (regular.length) html += `<div class="notice-section-label">일반 공지</div>${regularHtml}`;
+
+  document.getElementById('noticeList').innerHTML = html;
+}
+
+/* ═══════════════════════════════
+   ACTIONS
+═══════════════════════════════ */
+function readItem(id) {
+  readState[id] = true;
+  renderNotifs();
+}
+
+function markAllRead() {
+  NOTIFS.forEach(n => { readState[n.id] = true; });
+  renderNotifs();
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  document.getElementById('fc-all').classList.toggle('active', f === 'all');
+  document.getElementById('fc-unread').classList.toggle('active', f === 'unread');
+  renderNotifs();
+}
+
+function switchTab(tab) {
+  ['notif', 'notice'].forEach(t => {
+    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+    document.getElementById('tc-' + t).classList.toggle('on', t === tab);
+  });
+}
+
+function openDetail(id) {
+  const n = NOTICES.find(x => x.id === id);
+  document.getElementById('dTag').textContent     = n.tagLabel.toUpperCase();
+  document.getElementById('dTag').className       = 'nd-tag ' + n.tagClass;
+  document.getElementById('dTitle').textContent   = n.title;
+  document.getElementById('dTime').textContent    = n.time;
+  document.getElementById('dContent').textContent = n.body;
+  document.getElementById('noticeDetail').classList.add('open');
+}
+
+function closeDetail() {
+  document.getElementById('noticeDetail').classList.remove('open');
+}
+
+function openNotifDetail(id) {
+  readItem(id);
+  const n = NOTIFS.find(x => x.id === id);
+  document.getElementById('ndTag').textContent     = n.sender || '호스트 공지';
+  document.getElementById('ndTitle').textContent   = n.title;
+  document.getElementById('ndTime').textContent    = n.time;
+  document.getElementById('ndContent').textContent = n.body;
+  document.getElementById('notifDetail').classList.add('open');
+}
+
+function closeNotifDetail() {
+  document.getElementById('notifDetail').classList.remove('open');
+}
+
+/* ═══════════════════════════════
+   데모 패널 벨 토글
+═══════════════════════════════ */
+let demoHasDot = true;
+function toggleDemoDot() {
+  // 모두 읽음 처리로 도트 제거 / 되돌리기
+  if (demoHasDot) {
+    NOTIFS.forEach(n => { readState[n.id] = true; });
+  } else {
+    NOTIFS.forEach(n => { readState[n.id] = n.isRead; });
+  }
+  demoHasDot = !demoHasDot;
+  renderNotifs();
+}
+
+/* ─── Init ─── */
+renderNotifs();
+renderNotices();
+</script>
+</body>
+</html>
