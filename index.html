@@ -725,6 +725,7 @@ body {
 ═══════════════════════════════ */
 
 const NOTIFS = [
+  /* ── C-01 networking_chat_request ── */
   {
     id: 'n1',
     type: 'networking_chat_request',
@@ -734,8 +735,8 @@ const NOTIFS = [
     sender: null,
     time: '3분 전',
     isRead: false,
-    cta: { label: '확인하기', style: '' },
   },
+  /* ── C-02 networking_chat_accepted ── */
   {
     id: 'n2',
     type: 'networking_chat_accepted',
@@ -745,58 +746,83 @@ const NOTIFS = [
     sender: null,
     time: '15분 전',
     isRead: false,
-    cta: { label: '대화하기', style: '' },
   },
+  /* ── C-03 networking_chat_rejected (5~10분 지연 발송) ── */
   {
     id: 'n3',
+    type: 'networking_chat_rejected',
+    iconClass: 'blue',
+    title: '대화 요청 결과',
+    desc: '대화 요청이 거절되었습니다. AI가 더 잘 맞는 참석자를 찾아드릴게요.',
+    sender: null,
+    time: '40분 전',
+    isRead: false,
+  },
+  /* ── C-04 networking_ai_match ── */
+  {
+    id: 'n4',
     type: 'networking_ai_match',
     iconClass: 'purple',
     title: 'AI 매칭 추천',
-    desc: '나와 잘 맞는 참석자 4명을 찾았어요. 지금 바로 확인해보세요.',
+    desc: '나와 잘 맞는 참석자 4명을 찾았어요.',
     sender: null,
     time: '1시간 전',
     isRead: false,
-    cta: { label: '추천 보기', style: '' },
   },
-  {
-    id: 'n4',
-    type: 'announcement_cancelled',
-    iconClass: 'red',
-    title: '[AI 디자인 컨퍼런스 2024] 취소 안내',
-    desc: '홍길동님, AI 디자인 컨퍼런스 2024의 행사 취소 안내를 드립니다. 불편을 드려 대단히 죄송합니다.',
-    sender: '한국디자인진흥원 주최측',
-    time: '2시간 전',
-    isRead: false,
-    hasDetail: true,
-    body: '홍길동님,\n\nAI 디자인 컨퍼런스 2024의 취소 안내를 드립니다.\n\n부득이한 사정으로 인해 행사가 전면 취소되었습니다. 이미 등록하신 분들께는 개별적으로 환불 안내 이메일이 발송될 예정입니다.\n\n환불 처리 기간: 영업일 기준 5~7일\n\n불편을 드려 대단히 죄송합니다.\n\n한국디자인진흥원 드림',
-  },
+  /* ── C-05 networking_interest_speaker ── */
   {
     id: 'n5',
-    type: 'event_started',
+    type: 'networking_interest_speaker',
+    iconClass: 'blue',
+    title: '관심 유저가 연사로 활동해요',
+    desc: '박서준(네이버)님이 \'AI 디자인 컨퍼런스 2024\'의 연사로 확정됐어요.',
+    sender: null,
+    time: '2시간 전',
+    isRead: true,
+  },
+  /* ── E-01 event_recommendation ── */
+  {
+    id: 'n6',
+    type: 'event_recommendation',
     iconClass: 'orange',
-    title: '행사가 시작됐어요',
-    desc: '\'서울 디자이너 워크숍\'이 지금 시작됐습니다.',
+    title: '맞춤 행사 추천',
+    desc: '관심사에 맞는 새 행사 \'서울 UX 포럼 2026\'이 등록됐어요.',
     sender: null,
     time: '3시간 전',
     isRead: true,
-    cta: null,
   },
+  /* ── E-04 event_speaker_status (보완요청) ── */
   {
-    id: 'n6',
-    type: 'event_reminder',
+    id: 'n7',
+    type: 'event_speaker_status',
     iconClass: 'orange',
-    title: 'D-1 행사 시작 임박',
-    desc: '내일은 \'AI 디자인 컨퍼런스 2024\' 개막일이에요. 행사 장소를 미리 확인해두세요.',
+    title: '연사 신청서 보완 요청',
+    desc: '\'AI 디자인 컨퍼런스 2024\' 연사 신청서에 보완 요청이 왔어요.',
     sender: null,
     time: '어제',
     isRead: true,
-    cta: null,
+    hasDetail: true,
+    body: '연사 신청서에 보완 요청 사항이 접수되었습니다.\n\n■ 보완 요청 내용\n발표 주제 요약(500자 이내)과 발표 경력 증빙 자료를 추가로 제출해주세요.\n\n■ 제출 기한\n2024년 3월 28일 (목) 오후 6시\n\n신청서 화면에서 직접 수정 후 재제출해주시기 바랍니다.\n\nAI 디자인 컨퍼런스 2024 운영팀 드림',
   },
+  /* ── H-A-08 announcement_cancelled (is_pinned: true 강제) ── */
   {
-    id: 'n7',
+    id: 'n8',
+    type: 'announcement_cancelled',
+    iconClass: 'red',
+    title: '[AI 디자인 컨퍼런스 2024] 취소 안내',
+    desc: '홍길동님, AI 디자인 컨퍼런스 2024의 행사 전체 취소 안내를 드립니다. 불편을 드려 대단히 죄송합니다.',
+    sender: '한국디자인진흥원 주최측',
+    time: '2일 전',
+    isRead: true,
+    hasDetail: true,
+    body: '홍길동님,\n\nAI 디자인 컨퍼런스 2024의 취소 안내를 드립니다.\n\n부득이한 사정으로 인해 행사가 전면 취소되었습니다. 이미 등록하신 분들께는 개별적으로 환불 안내 이메일이 발송될 예정입니다.\n\n환불 처리 기간: 영업일 기준 5~7일\n\n불편을 드려 대단히 죄송합니다.\n\n한국디자인진흥원 드림',
+  },
+  /* ── H-A-01 announcement_material_request ── */
+  {
+    id: 'n9',
     type: 'announcement_material_request',
     iconClass: 'yellow',
-    title: '[AI 디자인 컨퍼런스 2024] 발표자료 제출 요청',
+    title: '[AI 디자인 컨퍼런스 2024] AI와 디자인 세션 발표자료 제출 요청',
     desc: '홍길동님, 발표자료 제출을 요청드립니다. 마감: 2024.03.22 18:00 | 제출 방법: 어드민 업로드',
     sender: '한국디자인진흥원 주최측',
     time: '3일 전',
@@ -837,29 +863,26 @@ const NOTICES = [
     time: '2026.03.15',
     body: 'CoreNode. 운영팀입니다.\n\nAI 매칭 엔진이 업데이트되었습니다.\n\n✨ 주요 개선사항\n\n1. 매칭 정확도 향상\n   직군·관심사·행사 이력을 종합 분석하는 새로운 모델을 적용했습니다.\n\n2. 관심사 태그 기능 추가\n   마이페이지에서 관심 키워드를 직접 입력하면 더 정확한 매칭을 받을 수 있어요.\n\n3. 매칭 점수 표시 개선\n   점수 산출 근거를 카드에서 바로 확인할 수 있습니다.\n\n더 편리한 네트워킹을 경험해보세요!',
   },
-  {
-    id: 'a4',
-    isPinned: false,
-    tagLabel: '프로모션',
-    tagClass: 'tag-promo',
-    title: '봄맞이 프리미엄 멤버십 특가',
-    desc: '3월 한 달간 프리미엄 첫 달 50% 할인! AI 매칭 무제한 + 커피챗 우선 노출 혜택.',
-    time: '2026.03.01',
-    body: 'CoreNode. 마케팅팀입니다.\n\n봄맞이 프리미엄 멤버십 특가 프로모션을 안내드립니다.\n\n🌸 혜택 안내\n• 프리미엄 첫 달 50% 할인\n• AI 매칭 횟수 무제한\n• 커피챗 신청 우선 노출\n• 명함 무제한 교환\n\n📅 기간\n2026.03.01 ~ 2026.03.31\n\n지금 바로 업그레이드하고 더 많은 인연을 만나보세요!',
-  },
 ];
 
 /* ═══════════════════════════════
    ICONS (단색 SVG)
 ═══════════════════════════════ */
 const ICONS = {
-  networking_chat_request: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
-  networking_chat_accepted: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
-  networking_ai_match: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
-  event_started: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
-  event_reminder: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
-  announcement_cancelled: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`,
-  announcement_material_request: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
+  /* networking */
+  networking_chat_request:    `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+  networking_chat_accepted:   `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
+  networking_chat_rejected:   `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/></svg>`,
+  networking_ai_match:        `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+  networking_interest_speaker:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>`,
+  /* event */
+  event_recommendation:       `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><polyline points="9 16 11 18 15 14"/></svg>`,
+  event_speaker_status:       `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>`,
+  /* announcement */
+  announcement_cancelled:          `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`,
+  announcement_material_request:   `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
+  announcement_event_open_reminder:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+  announcement_program_changed:    `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`,
 };
 
 const PIN_ICON = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24z"/></svg>`;
