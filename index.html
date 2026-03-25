@@ -246,6 +246,7 @@ body {
   border-bottom: 1px solid var(--border-light);
   padding: 14px 16px;
   display: flex;
+  align-items: stretch;
   gap: 12px;
   cursor: pointer;
   transition: background var(--trans);
@@ -318,9 +319,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   flex-shrink: 0;
-  padding-top: 3px;
   gap: 6px;
 }
 .unread-dot {
@@ -960,24 +960,24 @@ function renderNotices() {
   const NCHEV = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C4CDD4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`;
 
   const pinnedHtml = pinned.map(n => `
-    <div class="ncard pinned" onclick="openDetail('${n.id}')" style="display:flex;align-items:flex-start;gap:8px;">
+    <div class="ncard pinned" onclick="openDetail('${n.id}')" style="display:flex;align-items:center;gap:8px;">
       <div style="flex:1;min-width:0;">
         <div class="ncard-badge badge-important">중요</div>
         <div class="ncard-title">${n.title}</div>
         <div class="ncard-desc">${n.desc}</div>
         <div class="ncard-time">${n.time}</div>
       </div>
-      <div style="flex-shrink:0;padding-top:2px;">${NCHEV}</div>
+      <div style="flex-shrink:0;">${NCHEV}</div>
     </div>`).join('');
 
   const regularHtml = regular.map(n => `
-    <div class="ncard" onclick="openDetail('${n.id}')" style="display:flex;align-items:flex-start;gap:8px;">
+    <div class="ncard" onclick="openDetail('${n.id}')" style="display:flex;align-items:center;gap:8px;">
       <div style="flex:1;min-width:0;">
         <div class="ncard-title">${n.title}</div>
         <div class="ncard-desc">${n.desc}</div>
         <div class="ncard-time">${n.time}</div>
       </div>
-      <div style="flex-shrink:0;padding-top:2px;">${NCHEV}</div>
+      <div style="flex-shrink:0;">${NCHEV}</div>
     </div>`).join('');
 
   let html = '';
