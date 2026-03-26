@@ -797,7 +797,6 @@ const NOTIFS = [
     type: 'event_speaker_status',
     iconClass: 'orange',
     title: '연사 신청서 보완 요청',
-    desc: '\'AI 디자인 컨퍼런스 2024\' 연사 신청서에 보완 요청이 왔어요.',
     sender: null,
     time: '어제',
     isRead: true,
@@ -810,7 +809,6 @@ const NOTIFS = [
     type: 'announcement_cancelled',
     iconClass: 'red',
     title: '[AI 디자인 컨퍼런스 2024] 취소 안내',
-    desc: '홍길동님, AI 디자인 컨퍼런스 2024의 행사 전체 취소 안내를 드립니다. 불편을 드려 대단히 죄송합니다.',
     sender: '한국디자인진흥원 주최측',
     time: '2일 전',
     isRead: true,
@@ -823,7 +821,6 @@ const NOTIFS = [
     type: 'announcement_material_request',
     iconClass: 'yellow',
     title: '[AI 디자인 컨퍼런스 2024] AI와 디자인 세션 발표자료 제출 요청',
-    desc: '홍길동님, 발표자료 제출을 요청드립니다. 마감: 2024.03.22 18:00 | 제출 방법: 어드민 업로드',
     sender: '한국디자인진흥원 주최측',
     time: '3일 전',
     isRead: true,
@@ -839,7 +836,6 @@ const NOTICES = [
     tagLabel: '시스템',
     tagClass: 'tag-system',
     title: '시스템 점검 안내',
-    desc: '3/26(수) 02:00~04:00 점검이 예정되어 있습니다. 일부 기능이 일시 제한될 수 있어요.',
     time: '2026.03.25',
     body: 'CoreNode. 운영팀입니다.\n\n아래 일정으로 시스템 정기 점검을 진행합니다.\n\n📅 점검 일시\n2026년 3월 26일 (수) 02:00 ~ 04:00\n\n🔧 점검 내용\n서버 인프라 업그레이드 및 데이터베이스 최적화\n\n⚠ 영향 범위\n점검 시간 동안 일부 기능(알림 발송, 대화 연결)이 일시적으로 제한될 수 있습니다. 데이터 손실 없이 정상 복구될 예정입니다.\n\n이용에 불편을 드려 죄송합니다.',
   },
@@ -849,7 +845,6 @@ const NOTICES = [
     tagLabel: '공지',
     tagClass: 'tag-notice',
     title: 'CoreNode. 이용약관 개정 안내',
-    desc: '2026년 4월 1일부터 개정 약관이 적용됩니다. 주요 변경사항을 확인해주세요.',
     time: '2026.03.20',
     body: 'CoreNode. 운영팀입니다.\n\n서비스 개선을 위해 이용약관을 아래와 같이 개정합니다.\n\n📌 시행일\n2026년 4월 1일 (수)\n\n📋 주요 변경사항\n1. 개인정보 수집·이용 목적 구체화\n2. AI 매칭 서비스 이용 동의 조항 신설\n3. 알림 발송 채널 설정 정책 명확화\n\n변경된 약관에 동의하지 않으실 경우 시행일 전까지 서비스 이용을 중단하고 탈퇴를 신청할 수 있습니다.\n\n감사합니다.',
   },
@@ -859,7 +854,6 @@ const NOTICES = [
     tagLabel: '업데이트',
     tagClass: 'tag-update',
     title: 'AI 매칭 기능 업데이트',
-    desc: '매칭 정확도가 대폭 개선되었습니다. 새로운 관심사 태그 기능도 사용해보세요!',
     time: '2026.03.15',
     body: 'CoreNode. 운영팀입니다.\n\nAI 매칭 엔진이 업데이트되었습니다.\n\n✨ 주요 개선사항\n\n1. 매칭 정확도 향상\n   직군·관심사·행사 이력을 종합 분석하는 새로운 모델을 적용했습니다.\n\n2. 관심사 태그 기능 추가\n   마이페이지에서 관심 키워드를 직접 입력하면 더 정확한 매칭을 받을 수 있어요.\n\n3. 매칭 점수 표시 개선\n   점수 산출 근거를 카드에서 바로 확인할 수 있습니다.\n\n더 편리한 네트워킹을 경험해보세요!',
   },
@@ -961,7 +955,7 @@ function renderGroup(items) {
         <div class="nicon ${n.iconClass}">${ICONS[n.type] || ''}</div>
         <div class="nbody">
           <div class="ntitle">${n.title}</div>
-          <div class="ndesc">${n.desc}</div>
+          <div class="ndesc">${n.body || n.desc}</div>
           <div class="nmeta">
             ${n.sender ? `<span class="nsender">${n.sender}</span><div class="nmeta-dot"></div>` : ''}
             <span class="ntime">${n.time}</span>
@@ -986,7 +980,7 @@ function renderNotices() {
       <div style="flex:1;min-width:0;">
         <div class="ncard-badge badge-important">중요</div>
         <div class="ncard-title">${n.title}</div>
-        <div class="ncard-desc">${n.desc}</div>
+        <div class="ncard-desc">${n.body || n.desc}</div>
         <div class="ncard-time">${n.time}</div>
       </div>
       <div style="flex-shrink:0;">${NCHEV}</div>
@@ -996,7 +990,7 @@ function renderNotices() {
     <div class="ncard" onclick="openDetail('${n.id}')" style="display:flex;align-items:flex-end;gap:8px;">
       <div style="flex:1;min-width:0;">
         <div class="ncard-title">${n.title}</div>
-        <div class="ncard-desc">${n.desc}</div>
+        <div class="ncard-desc">${n.body || n.desc}</div>
         <div class="ncard-time">${n.time}</div>
       </div>
       <div style="flex-shrink:0;">${NCHEV}</div>
